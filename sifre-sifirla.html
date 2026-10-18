@@ -1,0 +1,18 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Yeni şifre belirle · Artıkpazar</title><style>
+:root{--bg:#F6F8F7;--tx:#14211C;--mu:#5B6B64;--ac:#0F6B4F;--sf:#fff;--ln:#DCE5E0}
+@media(prefers-color-scheme:dark){:root{--bg:#0E1512;--tx:#E8F0EC;--mu:#9DB0A7;--ac:#34B58B;--sf:#16201B;--ln:#27352E}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:720px;margin:0 auto;padding:28px 18px 60px}h1{font-size:26px;line-height:1.25;margin:.2em 0 .4em}h2{font-size:18px;margin:1.8em 0 .4em}
+p,li{color:var(--tx)}.mu{color:var(--mu);font-size:14px}a{color:var(--ac)}nav{display:flex;gap:14px;flex-wrap:wrap;margin:0 0 18px;font-size:14px}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:18px;margin-top:16px}
+input{width:100%;min-height:50px;border:1.5px solid var(--ln);border-radius:12px;background:var(--sf);color:var(--tx);padding:0 14px;font-size:16px;margin:6px 0 12px}
+button{min-height:50px;width:100%;border:0;border-radius:12px;background:var(--ac);color:#fff;font-size:16px;font-weight:600;cursor:pointer}
+button.d{background:#B3261E}#msg{margin-top:12px;font-weight:600}
+</style></head><body><main><nav><a href="index.html">Artıkpazar</a><a href="gizlilik.html">Gizlilik Politikası</a><a href="kosullar.html">Kullanım Koşulları</a><a href="kvkk.html">KVKK Aydınlatma</a><a href="hesap-sil.html">Hesap Silme</a></nav><h1>Yeni şifre belirle</h1><div class="card" id="box"><p class="mu" id="wait">E-postandaki bağlantıyla geldiysen aşağıya yeni şifreni yazabilirsin.</p>
+<label for="p">Yeni şifre (en az 6 karakter)</label><input id="p" type="password" autocomplete="new-password"><button id="go">Şifreyi kaydet</button><div id="msg" role="alert"></div></div></main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
+<script>const sb=supabase.createClient("https://qpttmgyarrbkeislithk.supabase.co","sb_publishable_tchHUmIdkeQ8_c5cQ2o1bA_GUg2plLK");const $=s=>document.querySelector(s);const say=(t,bad)=>{const m=$("#msg");m.textContent=t;m.style.color=bad?"#B3261E":"var(--ac)"};
+let ok=false;sb.auth.onAuthStateChange((ev)=>{if(ev==="PASSWORD_RECOVERY"||ev==="SIGNED_IN")ok=true});
+$("#go").onclick=async()=>{const p=$("#p").value;if(p.length<6){say("Şifre en az 6 karakter olmalı.",1);return}
+const s=await sb.auth.getSession();if(!s.data.session){say("Bağlantının süresi dolmuş olabilir. Uygulamadan “Şifremi unuttum” ile yeni bağlantı iste.",1);return}
+const r=await sb.auth.updateUser({password:p});if(r.error){say("Kaydedilemedi: "+r.error.message,1);return}
+await sb.auth.signOut();$("#go").disabled=true;say("Şifren değişti. Uygulamaya dönüp giriş yapabilirsin.")};</script></body></html>
