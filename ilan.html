@@ -1,0 +1,27 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>İlan · Artıkpazar</title><style>
+:root{--bg:#F6F8F7;--tx:#14211C;--mu:#5B6B64;--ac:#0F6B4F;--sf:#fff;--ln:#DCE5E0}
+@media(prefers-color-scheme:dark){:root{--bg:#0E1512;--tx:#E8F0EC;--mu:#9DB0A7;--ac:#34B58B;--sf:#16201B;--ln:#27352E}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:720px;margin:0 auto;padding:28px 18px 60px}h1{font-size:26px;line-height:1.25;margin:.2em 0 .4em}h2{font-size:18px;margin:1.8em 0 .4em}
+p,li{color:var(--tx)}.mu{color:var(--mu);font-size:14px}a{color:var(--ac)}nav{display:flex;gap:14px;flex-wrap:wrap;margin:0 0 18px;font-size:14px}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:18px;margin-top:16px}
+input{width:100%;min-height:50px;border:1.5px solid var(--ln);border-radius:12px;background:var(--sf);color:var(--tx);padding:0 14px;font-size:16px;margin:6px 0 12px}
+button{min-height:50px;width:100%;border:0;border-radius:12px;background:var(--ac);color:#fff;font-size:16px;font-weight:600;cursor:pointer}
+button.d{background:#B3261E}#msg{margin-top:12px;font-weight:600}
+</style></head><body><main><nav><a href="index.html">Artıkpazar</a><a href="gizlilik.html">Gizlilik Politikası</a><a href="kosullar.html">Kullanım Koşulları</a><a href="kvkk.html">KVKK Aydınlatma</a><a href="hesap-sil.html">Hesap Silme</a></nav><h1>İlan</h1><div id="box" class="card"><p class="mu" id="st">İlan yükleniyor…</p></div>
+<div class="card"><b>Artıkpazar'da aç</b><p>Satıcıya mesaj yazmak ve ilanın tamamını görmek için Artıkpazar uygulamasını kullan. Uygulama yakında Google Play'de.</p></div>
+<p class="mu">İlanlar kullanıcılar tarafından yayınlanır. Ürünü görmeden ön ödeme yapma.</p></main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
+<script>const sb=supabase.createClient("https://qpttmgyarrbkeislithk.supabase.co","sb_publishable_tchHUmIdkeQ8_c5cQ2o1bA_GUg2plLK");const $=s=>document.querySelector(s);const say=(t,bad)=>{const m=$("#msg");m.textContent=t;m.style.color=bad?"#B3261E":"var(--ac)"};
+(async()=>{const id=new URLSearchParams(location.search).get("id");const st=$("#st");
+if(!/^[0-9a-f-]{36}$/.test(id||"")){st.textContent="İlan bulunamadı.";return}
+const r=await sb.from("listings").select("title,city,district,data,kind,created_at,expires_at").eq("id",id).eq("status","active").maybeSingle();
+if(r.error||!r.data||new Date(r.data.expires_at)<new Date()){st.textContent="Bu ilan artık yayında değil.";return}
+const l=r.data,d=l.data||{},box=$("#box");box.innerHTML="";
+const ph=(d.photos||[]).find(u=>typeof u==="string"&&u.startsWith("https://qpttmgyarrbkeislithk.supabase.co/storage/"));
+if(ph){const im=document.createElement("img");im.src=ph;im.alt="";im.style.cssText="width:100%;border-radius:12px;margin-bottom:12px";box.appendChild(im)}
+const h=document.createElement("h2");h.style.margin="0 0 6px";h.textContent=l.title;box.appendChild(h);
+const f=new Intl.NumberFormat("tr-TR");
+const p=document.createElement("p");p.style.fontWeight="700";p.textContent=l.kind==="ihtiyac"?"Aranıyor: "+f.format(+d.qty||0)+" "+(d.unit||""):"₺"+f.format(+d.price||0)+" / "+(d.unit||"")+" · "+f.format(+d.qty||0)+" "+(d.unit||"");box.appendChild(p);
+const w=document.createElement("p");w.className="mu";w.textContent=(l.district||"")+", "+(l.city||"");box.appendChild(w);
+if(d.desc){const t=document.createElement("p");t.textContent=d.desc;box.appendChild(t)}
+document.title=l.title+" · Artıkpazar"})();</script></body></html>
